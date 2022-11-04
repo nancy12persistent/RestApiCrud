@@ -1,7 +1,5 @@
 package com.newproject.springbootbackend.controller;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,24 +29,19 @@ public class EmployeeController {
 	public EmployeeController(EmployeeService employeeService) {
 		super();
 		this.employeeService = employeeService;
-	}
-	
+	}	
 	//Build create employee REST API
 	@PostMapping
 	public ResponseEntity<Object> saveEmployee(@RequestBody Employee employee) {
 			if(employee.getFirst_name().matches("[a-zA-Z]+") && employee.getLast_name().matches("[a-zA-Z]+") &&  employee.getDepartment().matches("[a-zA-Z]+")) {
 			employeeService.saveEmployee(employee);
-			String name=employee.getFirst_name()+" "+employee.getLast_name();
-			Map<String, String> m=new HashMap<String,String>();
-			m.put("name", name);
-			restTemplate.postForEntity(baseUrl+"save", m,void.class);
+			employeeService.getnameEmployeePost(employee);
             return ResponseHandler2.generateResponse("Successfully data saved!", HttpStatus.OK);
 		}
 			else{
 		    return ResponseHandler2.generateResponse("Enter the correct format", HttpStatus.MULTI_STATUS);		
 		}		
-	}
-	
+	}	
 	//Build get all employee REST API
 	@GetMapping(value="/getemp")
 		public ResponseEntity<Object> getAllEmployees() {
@@ -59,9 +52,7 @@ public class EmployeeController {
 	            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
 	        }
 	    }
-		
-	
-	
+			
 	//Build Get Employee by ID REST API
 	@GetMapping("{id}")
 	public ResponseEntity<Object> getEmployeeByID(@PathVariable("id") long id){
@@ -80,18 +71,13 @@ public class EmployeeController {
 			Employee emp = employeeService.getEmployeeByID(id);
 			String name = emp.getFirst_name()+" "+emp.getLast_name();		
 			boolean Isstatus=restTemplate.exchange(baseUrl+"status/"+name,HttpMethod.GET,null,boolean.class).getBody();	
-
 			if(Isstatus) {
-				Employee result = employeeService.updateEmployee(employee,id);	
-				String newname=result.getFirst_name()+" "+result.getLast_name();
-				Map<String, String> m=new HashMap<String,String>();
-				m.put("name", newname);
-			    //new project
-				restTemplate.put(baseUrl+"update/"+name,m,void.class);
-			    return ResponseHandler.generateResponse("Updated!", HttpStatus.OK, result);
-			}
-		  else {
-			return ResponseHandler.generateResponse("Not Updated", HttpStatus.MULTI_STATUS,null);}
+				Employee result = employeeService.updateEmployee(employee,id);
+				employeeService.getnameEmployeePut(result,name);
+			    return ResponseHandler2.generateResponse("Updated!", HttpStatus.OK );
+			}else{
+		 
+			return ResponseHandler2.generateResponse("Not Updated", HttpStatus.MULTI_STATUS);}
 		 
 	}
 	
@@ -103,15 +89,15 @@ public class EmployeeController {
 		    boolean Isexist = employeeService.isAvailable(id);
 			if(Isexist) {
 				Employee emp = employeeService.getEmployeeByID(id);
-				String name= emp.getFirst_name()+" "+emp.getLast_name();
-				String result = employeeService.deleteEmployee(id);	
+		        String name= emp.getFirst_name()+" "+emp.getLast_name();
+				employeeService.deleteEmployee(id);	
                 //new project, just change status		   
 			    ResponseEntity<Void> responseEntity=restTemplate.exchange(baseUrl+"updateStatus/"+name,HttpMethod.PUT,null,void.class);
 			    System.out.println("Status code: "+responseEntity.getStatusCodeValue());
-                return ResponseHandler.generateResponse("Deleted! and Status of Employee is changed", HttpStatus.OK, result);
+                return ResponseHandler2.generateResponse("Deleted! and Status of Employee is changed", HttpStatus.OK);
 			}
 			else{  
-				return ResponseHandler.generateResponse("NO data with this id found", HttpStatus.MULTI_STATUS,null); 
+				return ResponseHandler2.generateResponse("NO data with this id found", HttpStatus.MULTI_STATUS); 
 		}}
 		catch(Exception e) {
 			return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS,null); 

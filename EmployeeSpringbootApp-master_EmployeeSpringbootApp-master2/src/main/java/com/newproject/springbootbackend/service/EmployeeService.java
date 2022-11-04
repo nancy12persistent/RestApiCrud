@@ -20,6 +20,9 @@ public interface EmployeeService {
 	
 	boolean isAvailable(long id);
 	
+	public void getnameEmployeePost(Employee employee);
+	
+	public void getnameEmployeePut(Employee employee, String name);
 	
 
 }
