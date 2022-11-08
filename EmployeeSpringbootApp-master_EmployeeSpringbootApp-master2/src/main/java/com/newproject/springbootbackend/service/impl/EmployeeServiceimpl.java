@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -78,7 +79,14 @@ public class EmployeeServiceimpl implements EmployeeService {
 		m.put("name", newname);
 	    //new project
 		restTemplate.put(baseUrl+"update/"+name,m,void.class);	
-	}	
+	}
+	
+	@Override
+	public void getnameEmployeeDelete(Employee emp) {
+		String name= emp.getFirst_name()+" "+emp.getLast_name();	
+        //new project, just change status		   
+	    restTemplate.exchange(baseUrl+"updateStatus/"+name,HttpMethod.PUT,null,void.class);
+	}
 	
 
 

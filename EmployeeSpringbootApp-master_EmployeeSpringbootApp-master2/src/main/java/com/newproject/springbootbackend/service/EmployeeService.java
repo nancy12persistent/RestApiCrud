@@ -24,5 +24,5 @@ public interface EmployeeService {
 	
 	public void getnameEmployeePut(Employee employee, String name);
 	
-
+	public void getnameEmployeeDelete(Employee emp);
 }

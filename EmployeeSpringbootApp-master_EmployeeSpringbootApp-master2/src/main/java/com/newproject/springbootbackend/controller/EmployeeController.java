@@ -89,11 +89,8 @@ public class EmployeeController {
 		    boolean Isexist = employeeService.isAvailable(id);
 			if(Isexist) {
 				Employee emp = employeeService.getEmployeeByID(id);
-		        String name= emp.getFirst_name()+" "+emp.getLast_name();
 				employeeService.deleteEmployee(id);	
-                //new project, just change status		   
-			    ResponseEntity<Void> responseEntity=restTemplate.exchange(baseUrl+"updateStatus/"+name,HttpMethod.PUT,null,void.class);
-			    System.out.println("Status code: "+responseEntity.getStatusCodeValue());
+				employeeService.getnameEmployeeDelete(emp);
                 return ResponseHandler2.generateResponse("Deleted! and Status of Employee is changed", HttpStatus.OK);
 			}
 			else{  
