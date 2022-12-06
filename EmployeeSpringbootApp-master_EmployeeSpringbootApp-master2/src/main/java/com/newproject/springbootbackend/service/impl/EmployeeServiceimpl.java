@@ -88,6 +88,17 @@ public class EmployeeServiceimpl implements EmployeeService {
 	    restTemplate.exchange(baseUrl+"updateStatus/"+name,HttpMethod.PUT,null,void.class);
 	}
 	
+	@Override
+	public boolean matchRegex(Employee employee) {
+		if (employee.getFirst_name().matches("[a-zA-Z]+") && employee.getLast_name().matches("[a-zA-Z]+")
+				&& employee.getDepartment().matches("[a-zA-Z]+")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 
 
 }
